@@ -1,30 +1,32 @@
 <template>
   <div class="lui-console">
-    <div @click="clear" class="lui-console__button">清空</div>
+    <div @contextmenu="clear" class="lui-console__button">右键清空</div>
     <div v-for="(item, index) in infoList" :key="index" class="lui-console__list">
       <span v-for="(l,i) in item" :key="i" class="lui-console__span">{{'   '+ l + '   '}}</span>
     </div>
   </div>
 </template>
 <script>
+let temp = console.log
+
 export default {
   data () {
     return {
       infoList: []
     }
   },
-  beforeCreate () {
-    this.$$temp = console.log
+  mounted () {
     console.log = (...args) => {
-      this.$$temp(...args)
+      temp(...args)
       this.infoList.push(args)
     }
   },
   beforeDestroy () {
-    console.log = this.$$temp
+    console.log = temp
   },
   methods: {
-    clear () {
+    clear (e) {
+      e.preventDefault()
       this.infoList = []
     }
   }
@@ -53,7 +55,7 @@ export default {
   &__button {
     position: absolute;
     top: 0;
-    left: 10px;
+    left: 5px;
     cursor: pointer;
     display: inline-block;
     height: 40px;
